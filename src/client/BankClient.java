@@ -1,9 +1,16 @@
 package client;
 
+import shared.SocketCommunicationBus;
+
+import java.io.IOException;
 import java.net.Socket;
 
 public class BankClient {
-    public static void main(String[] args) {
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
+
+
+    public static void main(String[] args) throws IOException {
         Socket serverSocket = null;
 
         try {
@@ -14,5 +21,12 @@ public class BankClient {
         }
 
         System.out.println("Connection with server has been established: " + serverSocket);
+
+        SocketCommunicationBus communicationBus = new SocketCommunicationBus(serverSocket);
+        communicationBus.registerListener(input -> System.out.println(ANSI_RED + input + ANSI_RESET));
+
+        while(true) {
+            communicationBus.handleIncomingInput();
+        }
     }
 }

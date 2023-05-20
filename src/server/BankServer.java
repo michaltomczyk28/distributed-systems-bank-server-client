@@ -27,7 +27,7 @@ public class BankServer {
 
             System.out.println("New connection: " + socket);
 
-            new Thread(new BankServerThread(socket)).start();
+            new Thread(new ClientConnectionThread(socket)).start();
         }
     }
 }
