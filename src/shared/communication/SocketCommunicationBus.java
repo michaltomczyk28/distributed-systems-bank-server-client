@@ -1,4 +1,4 @@
-package shared;
+package shared.communication;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,6 +30,10 @@ public class SocketCommunicationBus {
     }
 
     public void handleIncomingInput() throws IOException {
+        if(!this.in.ready()){
+            return;
+        }
+
         String inputLine = this.in.readLine();
 
         if(inputLine != null) {

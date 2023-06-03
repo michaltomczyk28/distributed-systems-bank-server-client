@@ -1,8 +1,10 @@
 package client;
 
-import shared.SocketCommunicationBus;
+import shared.communication.SocketCommunicationBus;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class BankClient {
@@ -12,6 +14,7 @@ public class BankClient {
 
     public static void main(String[] args) throws IOException {
         Socket serverSocket = null;
+        BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
             serverSocket = new Socket("localhost", 8081);
@@ -26,6 +29,13 @@ public class BankClient {
         communicationBus.registerListener(input -> System.out.println(ANSI_RED + input + ANSI_RESET));
 
         while(true) {
+            if(consoleReader.ready()) {
+                String line = consoleReader.readLine();
+                if (line != null) {
+                    communicationBus.sendMessage(line);
+                }
+            }
+
             communicationBus.handleIncomingInput();
         }
     }
