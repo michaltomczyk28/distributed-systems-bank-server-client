@@ -5,15 +5,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserRepository extends BaseRepository {
-    public boolean canAuthenticate(String username, String password) {
+    public String authenticateUser(String username, String password) {
         try {
-            PreparedStatement statement = this.prepareStatement("select * from user where username like ? and password like ?");
+            PreparedStatement statement = this.prepareStatement("select id from user where username like ? and password like ?");
             statement.setString(1, username);
             statement.setString(2, password);
 
             ResultSet rs = statement.executeQuery();
-
-            return rs.isBeforeFirst(); // no results
+            return rs.getString("id");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

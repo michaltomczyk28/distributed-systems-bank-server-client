@@ -1,16 +1,15 @@
 package server;
 
+import server.context.ClientApplicationContext;
 import shared.communication.SocketCommunicationBus;
-import shared.communication.SocketCommunicationListener;
-import shared.state.ConnectionState;
-import shared.state.UnauthenticatedConnectionState;
+import shared.state.ApplicationState;
+import shared.state.UnauthenticatedState;
 
 import java.net.Socket;
 
-public class ClientConnectionThread implements Runnable, SocketCommunicationListener {
+public class ClientConnectionThread implements Runnable {
     private Socket clientSocket;
-    private SocketCommunicationBus communicationBus;
-    private ConnectionState connectionState;
+    private ClientApplicationContext applicationContext;
 
     public ClientConnectionThread(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -19,21 +18,22 @@ public class ClientConnectionThread implements Runnable, SocketCommunicationList
     @Override
     public void run() {
         try {
-            this.communicationBus = new SocketCommunicationBus(clientSocket);
-            this.communicationBus.registerListener(this);
-            this.communicationBus.sendMessage("--- BANK SERVER ---");
+            this.applicationContext = new ClientApplicationContext(
+                    new SocketCommunicationBus(clientSocket)
+            );
 
-            this.connectionState = new UnauthenticatedConnectionState(this.communicationBus);
+            SocketCommunicationBus communicationBus = this.applicationContext.getCommunicationBus();
+
+            this.applicationContext.setApplicationState(
+                    new UnauthenticatedState(this.applicationContext)
+            );
 
             while(true) {
-                this.connectionState.next();
-                this.communicationBus.handleIncomingInput();
+                ApplicationState state = this.applicationContext.getApplicationState();
+                state.next();
+
+                communicationBus.handleIncomingInput();
             }
         } catch (Exception ignored) {}
-    }
-
-    @Override
-    public void onInput(String input) {
-        System.out.println("FROM CLIENT: " + input);
     }
 }

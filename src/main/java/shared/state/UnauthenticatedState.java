@@ -1,18 +1,23 @@
 package shared.state;
 
+import server.context.ApplicationContext;
 import server.repository.UserRepository;
 import shared.communication.SocketCommunicationBus;
 
-public class UnauthenticatedConnectionState implements ConnectionState {
+public class UnauthenticatedState implements ApplicationState {
+    private ApplicationContext applicationContext;
     private SocketCommunicationBus communicationBus;
     private UserRepository userRepository;
     private String username;
     private String password;
     private boolean isPendingForResponse = false;
 
-    public UnauthenticatedConnectionState(SocketCommunicationBus communicationBus) {
-        this.communicationBus = communicationBus;
+    public UnauthenticatedState(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+
+        this.communicationBus = applicationContext.getCommunicationBus();
         this.communicationBus.registerListener(this);
+
         this.userRepository = new UserRepository();
     }
 
@@ -45,11 +50,14 @@ public class UnauthenticatedConnectionState implements ConnectionState {
     }
 
     private void attemptLogin() {
-        boolean result = this.userRepository.canAuthenticate(this.username, this.password);
+        String userId = this.userRepository.authenticateUser(this.username, this.password);
 
-        if(result) {
-            this.communicationBus.sendMessage("You've been authenticated successfully!");
-            this.isPendingForResponse = true;
+        if(userId != null) {
+            this.communicationBus.sendMessage("\nYou've been authenticated successfully!");
+
+            this.applicationContext.setLoggedInUserId(userId);
+            this.applicationContext.setApplicationState(new CommandExecutionState(this.applicationContext));
+
             return;
         }
 
