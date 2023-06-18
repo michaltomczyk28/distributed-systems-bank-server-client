@@ -1,8 +1,8 @@
 package shared.state;
 
 import server.commands.ApplicationCommand;
-import server.commands.BalanceCommand;
-import server.commands.TransferCommand;
+import server.commands.DepositMoneyCommand;
+import server.commands.GetBalanceCommand;
 import server.context.ApplicationContext;
 import shared.communication.SocketCommunicationBus;
 
@@ -21,8 +21,7 @@ public class CommandExecutionState implements ApplicationState {
     @Override
     public void onInput(String input) {
         if(currentCommand == null) {
-            // Create base on input value
-            this.currentCommand = new BalanceCommand(this.applicationContext);
+            this.currentCommand = createCommandByName(input);
 
             return;
         }
@@ -57,5 +56,20 @@ public class CommandExecutionState implements ApplicationState {
             Type a command:""");
 
         this.didDisplayMenu = true;
+    }
+
+    private ApplicationCommand createCommandByName(String name) {
+        switch(name) {
+            case "balance":
+                return new GetBalanceCommand(this.applicationContext);
+
+            case "deposit":
+                return new DepositMoneyCommand(this.applicationContext);
+        }
+
+        this.communicationBus.sendMessage("\nERROR: Invalid command!");
+        this.didDisplayMenu = false;
+
+        return null;
     }
 }

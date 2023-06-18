@@ -5,8 +5,8 @@ import server.repository.AccountRepository;
 
 import java.util.List;
 
-public class BalanceCommand extends ApplicationCommand {
-    public BalanceCommand(ApplicationContext applicationContext) {
+public class GetBalanceCommand extends ApplicationCommand {
+    public GetBalanceCommand(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 

@@ -17,4 +17,16 @@ public class AccountRepository extends BaseRepository {
             throw new RuntimeException(e);
         }
     }
+
+    public void depositMoneyForUser(String userId, float amount) {
+        try {
+            PreparedStatement statement = this.prepareStatement("update account set balance = balance + ? where user_id = ?");
+            statement.setFloat(1, amount);
+            statement.setString(2, userId);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
