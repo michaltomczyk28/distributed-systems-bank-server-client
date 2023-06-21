@@ -1,9 +1,6 @@
 package shared.state;
 
-import server.commands.ApplicationCommand;
-import server.commands.DepositMoneyCommand;
-import server.commands.GetBalanceCommand;
-import server.commands.WithdrawMoneyCommand;
+import server.commands.*;
 import server.context.ApplicationContext;
 import shared.communication.SocketCommunicationBus;
 
@@ -49,6 +46,7 @@ public class CommandExecutionState implements ApplicationState {
             ――――――――――――――――――――
             Available commands:
             
+            1. My account: ⟪ me ⟫
             1. Transfer money: ⟪ transfer ⟫
             2. Check your balance: ⟪ balance ⟫
             3. Withdraw money: ⟪ withdraw ⟫
@@ -61,6 +59,9 @@ public class CommandExecutionState implements ApplicationState {
 
     private ApplicationCommand createCommandByName(String name) {
         switch(name) {
+            case "me":
+                return new UserInformationCommand(this.applicationContext);
+
             case "balance":
                 return new GetBalanceCommand(this.applicationContext);
 
