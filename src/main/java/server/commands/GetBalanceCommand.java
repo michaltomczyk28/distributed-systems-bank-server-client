@@ -23,7 +23,7 @@ public class GetBalanceCommand extends ApplicationCommand {
     @Override
     protected String execute() {
         AccountRepository accountRepository = new AccountRepository();
-        float balance = accountRepository.getBalanceByUserId(this.applicationContext.getLoggedInUserId());
+        double balance = accountRepository.getBalanceByUserId(this.applicationContext.getLoggedInUserId());
 
         return "Your balance: " + balance;
     }

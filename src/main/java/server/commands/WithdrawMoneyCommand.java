@@ -5,9 +5,13 @@ import server.repository.AccountRepository;
 
 import java.util.List;
 
-public class DepositMoneyCommand extends ApplicationCommand {
-    public DepositMoneyCommand(ApplicationContext applicationContext) {
+public class WithdrawMoneyCommand extends ApplicationCommand {
+    private final AccountRepository accountRepository;
+
+    public WithdrawMoneyCommand(ApplicationContext applicationContext) {
         super(applicationContext);
+
+        this.accountRepository = new AccountRepository();
     }
 
     @Override
@@ -26,6 +30,13 @@ public class DepositMoneyCommand extends ApplicationCommand {
                 return "Amount must be a positive number";
             }
 
+            String loggedInUserId = this.applicationContext.getLoggedInUserId();
+            double balance = this.accountRepository.getBalanceByUserId(loggedInUserId);
+
+            if(balance < amount) {
+                return "You don't have enough money.";
+            }
+
             return null;
         } catch(NumberFormatException e) {
             return "Amount must be a valid number";
@@ -35,10 +46,8 @@ public class DepositMoneyCommand extends ApplicationCommand {
     @Override
     protected String execute() {
         double amount = Double.parseDouble(this.getValueForStep("amount"));
+        this.accountRepository.withdrawMoneyForUser(this.applicationContext.getLoggedInUserId(), amount);
 
-        AccountRepository accountRepository = new AccountRepository();
-        accountRepository.depositMoneyForUser(this.applicationContext.getLoggedInUserId(), amount);
-
-        return "Successfully deposited money";
+        return "Successfully withdrawn money";
     }
 }

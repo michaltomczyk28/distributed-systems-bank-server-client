@@ -3,6 +3,7 @@ package shared.state;
 import server.commands.ApplicationCommand;
 import server.commands.DepositMoneyCommand;
 import server.commands.GetBalanceCommand;
+import server.commands.WithdrawMoneyCommand;
 import server.context.ApplicationContext;
 import shared.communication.SocketCommunicationBus;
 
@@ -21,7 +22,7 @@ public class CommandExecutionState implements ApplicationState {
     @Override
     public void onInput(String input) {
         if(currentCommand == null) {
-            this.currentCommand = createCommandByName(input);
+            this.currentCommand = this.createCommandByName(input);
 
             return;
         }
@@ -65,6 +66,9 @@ public class CommandExecutionState implements ApplicationState {
 
             case "deposit":
                 return new DepositMoneyCommand(this.applicationContext);
+
+            case "withdraw":
+                return new WithdrawMoneyCommand(this.applicationContext);
         }
 
         this.communicationBus.sendMessage("\nERROR: Invalid command!");
