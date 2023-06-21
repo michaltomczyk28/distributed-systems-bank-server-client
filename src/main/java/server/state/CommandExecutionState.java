@@ -1,4 +1,4 @@
-package shared.state;
+package server.state;
 
 import server.commands.*;
 import server.context.ApplicationContext;

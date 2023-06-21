@@ -1,7 +1,7 @@
 package server.commands;
 
 import server.context.ApplicationContext;
-import shared.state.CommandExecutionState;
+import server.state.CommandExecutionState;
 
 import java.util.HashMap;
 import java.util.List;

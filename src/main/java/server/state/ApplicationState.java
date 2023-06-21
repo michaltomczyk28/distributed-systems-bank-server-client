@@ -1,4 +1,4 @@
-package shared.state;
+package server.state;
 
 import shared.communication.SocketCommunicationListener;
 

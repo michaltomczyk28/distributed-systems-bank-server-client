@@ -2,8 +2,8 @@ package server;
 
 import server.context.ClientApplicationContext;
 import shared.communication.SocketCommunicationBus;
-import shared.state.ApplicationState;
-import shared.state.UnauthenticatedState;
+import server.state.ApplicationState;
+import server.state.UnauthenticatedState;
 
 import java.net.Socket;
 

@@ -1,4 +1,4 @@
-package shared.state;
+package server.state;
 
 import server.context.ApplicationContext;
 import server.repository.UserRepository;

@@ -1,7 +1,7 @@
 package server.context;
 
 import shared.communication.SocketCommunicationBus;
-import shared.state.ApplicationState;
+import server.state.ApplicationState;
 
 public interface ApplicationContext {
     SocketCommunicationBus getCommunicationBus();
