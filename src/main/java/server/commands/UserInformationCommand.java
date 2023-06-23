@@ -31,8 +31,9 @@ public class UserInformationCommand extends ApplicationCommand {
 
         return String.format("""
                 Username: %s
+                
                 First name: %s
-                Last name: %s,
+                Last name: %s
                 PESEL: %s
                 
                 Account number: %s""",

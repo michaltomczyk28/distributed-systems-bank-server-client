@@ -70,6 +70,9 @@ public class CommandExecutionState implements ApplicationState {
 
             case "withdraw":
                 return new WithdrawMoneyCommand(this.applicationContext);
+
+            case "transfer":
+                return new TransferCommand(this.applicationContext);
         }
 
         this.communicationBus.sendMessage("\nERROR: Invalid command!");

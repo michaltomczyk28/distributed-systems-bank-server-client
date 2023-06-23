@@ -23,8 +23,6 @@ public class BankClient {
             System.exit(-1);
         }
 
-        System.out.println("Connection with server has been established: " + serverSocket);
-
         SocketCommunicationBus communicationBus = new SocketCommunicationBus(serverSocket);
         communicationBus.registerListener(input -> System.out.println(ANSI_RED + input + ANSI_RESET));
 

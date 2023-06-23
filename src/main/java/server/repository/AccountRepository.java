@@ -22,9 +22,7 @@ public class AccountRepository extends BaseRepository {
 
     public void depositMoneyForUser(String userId, double amount) {
         try {
-            System.out.println(amount);
             PreparedStatement statement = this.prepareStatement("update account set balance = balance + ? where user_id = ?");
-            System.out.println((int) (amount * 100));
             statement.setInt(1, (int) (amount * 100));
             statement.setString(2, userId);
 
@@ -41,6 +39,38 @@ public class AccountRepository extends BaseRepository {
             statement.setString(2, userId);
 
             statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getOwnerId(String value) {
+        try {
+            PreparedStatement statement = this.prepareStatement("select user_id from account where account_number like ?");
+            statement.setString(1, value);
+
+            ResultSet rs = statement.executeQuery();
+
+            return rs.getString("user_id");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void transferMoney(String fromUserId, String toAccountNumber, double amount) {
+        try {
+            // from
+            PreparedStatement sourceAccountStatement = this.prepareStatement("update account set balance = balance - ? where user_id = ?");
+            sourceAccountStatement.setDouble(1, (int) (amount * 100));
+            sourceAccountStatement.setString(2, fromUserId);
+            sourceAccountStatement.executeUpdate();
+
+            // to
+            PreparedStatement targetAccountStatement = this.prepareStatement("update account set balance = balance + ? where account_number like ?");
+            targetAccountStatement.setDouble(1, (int) (amount * 100));
+            targetAccountStatement.setString(2, toAccountNumber);
+            targetAccountStatement.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
