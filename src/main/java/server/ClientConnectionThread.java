@@ -1,15 +1,18 @@
 package server;
 
+import server.context.ApplicationContext;
 import server.context.ClientApplicationContext;
 import server.state.ApplicationState;
-import server.state.ClientUnauthenticatedState;
+import server.state.ClientStateFactory;
+import server.state.StateFactory;
+import server.state.UnauthenticatedState;
 import shared.communication.SocketCommunicationBus;
 
 import java.net.Socket;
 
 public class ClientConnectionThread implements Runnable {
     private Socket clientSocket;
-    private ClientApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     public ClientConnectionThread(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -19,14 +22,15 @@ public class ClientConnectionThread implements Runnable {
     public void run() {
         try {
             this.applicationContext = new ClientApplicationContext(
-                    new SocketCommunicationBus(clientSocket)
+                    new SocketCommunicationBus(clientSocket),
+                    new ClientStateFactory()
             );
 
             SocketCommunicationBus communicationBus = this.applicationContext.getCommunicationBus();
+            StateFactory stateFactory = this.applicationContext.getStateFactory();
 
-            this.applicationContext.setApplicationState(
-                    new ClientUnauthenticatedState(this.applicationContext)
-            );
+            UnauthenticatedState unauthenticatedState = stateFactory.createUnauthenticatedState(this.applicationContext);
+            this.applicationContext.setApplicationState(unauthenticatedState);
 
             while(true) {
                 ApplicationState state = this.applicationContext.getApplicationState();
