@@ -4,30 +4,48 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+interface ConnectionThreadFunction {
+    ConnectionThread createConnectionThread(Socket socket);
+}
+
 public class BankServer {
     public static void main(String[] args) {
-        ServerSocket serverSocket = null;
-        Socket socket = null;
+        Thread clientServerThread = createThreadForServerSocket("client server", 8081, ClientConnectionThread::new);
+        Thread adminServerThread = createThreadForServerSocket("admin server", 8082, AdminConnectionThread::new);
 
-        try {
-            serverSocket = new ServerSocket(8081);
-        } catch (IOException e) {
-            System.out.println("Couldn't create a server socket.");
-            System.exit(-1);
-        }
+        clientServerThread.start();
+        adminServerThread.start();
+    }
 
-        System.out.println("Server socket has been initialized: " + serverSocket);
+    private static Thread createThreadForServerSocket(String name, int port, ConnectionThreadFunction connectionThreadFunction) {
+        return new Thread(
+            () -> {
+                ServerSocket serverSocket = null;
+                Socket socket = null;
 
-        while (true) {
-            try {
-                socket = serverSocket.accept();
-            } catch (IOException e) {
-                System.out.println("IOException: " + e.getMessage());
+                try {
+                    serverSocket = new ServerSocket(port);
+                } catch (IOException e) {
+                    System.out.println(name + "> couldn't create a server socket");
+                    return;
+                }
+
+                System.out.println(name + "> server socket has been initialized: " + serverSocket);
+
+                while (true) {
+                    try {
+                        socket = serverSocket.accept();
+                    } catch (IOException e) {
+                        System.out.println(name + "> IOException: " + e.getMessage());
+                    }
+
+                    System.out.println(name + "> new connection: " + socket);
+
+                    ConnectionThread connectionThread = connectionThreadFunction.createConnectionThread(socket);
+                    new Thread(connectionThread).start();
+                }
             }
+        );
 
-            System.out.println("New connection: " + socket);
-
-            new Thread(new ClientConnectionThread(socket)).start();
-        }
     }
 }

@@ -1,6 +1,6 @@
 package server.context;
 
-import server.state.StateFactory;
+import server.state.factory.StateFactory;
 import shared.communication.SocketCommunicationBus;
 import server.state.ApplicationState;
 

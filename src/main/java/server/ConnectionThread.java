@@ -1,10 +1,9 @@
 package server;
 
 import server.context.ApplicationContext;
-import server.context.ClientApplicationContext;
+import server.context.ApplicationContextImpl;
 import server.state.ApplicationState;
-import server.state.ClientStateFactory;
-import server.state.StateFactory;
+import server.state.factory.StateFactory;
 import server.state.UnauthenticatedState;
 import shared.communication.SocketCommunicationBus;
 
@@ -21,7 +20,7 @@ public abstract class ConnectionThread implements Runnable {
     @Override
     public void run() {
         try {
-            this.applicationContext = new ClientApplicationContext(
+            this.applicationContext = new ApplicationContextImpl(
                     new SocketCommunicationBus(clientSocket),
                     this.createStateFactory()
             );
@@ -41,5 +40,5 @@ public abstract class ConnectionThread implements Runnable {
         } catch (Exception ignored) {}
     }
 
-    protected abstract ClientStateFactory createStateFactory();
+    protected abstract StateFactory createStateFactory();
 }

@@ -1,15 +1,16 @@
-package server.state;
+package server.state.factory;
 
 import server.context.ApplicationContext;
+import server.state.*;
 
-public class ClientStateFactory implements StateFactory {
+public class AdminStateFactory implements StateFactory {
     @Override
     public UnauthenticatedState createUnauthenticatedState(ApplicationContext applicationContext) {
-        return new ClientUnauthenticatedState(applicationContext);
+        return new AdminUnauthenticatedState(applicationContext);
     }
 
     @Override
     public CommandExecutionState createCommandExecutionState(ApplicationContext applicationContext) {
-        return new ClientCommandExecutionState(applicationContext);
+        return new AdminCommandExecutionState(applicationContext);
     }
 }

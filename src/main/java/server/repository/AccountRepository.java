@@ -44,10 +44,10 @@ public class AccountRepository extends BaseRepository {
         }
     }
 
-    public String getOwnerId(String value) {
+    public String getOwnerId(String accountNumber) {
         try {
             PreparedStatement statement = this.prepareStatement("select user_id from account where account_number like ?");
-            statement.setString(1, value);
+            statement.setString(1, accountNumber);
 
             ResultSet rs = statement.executeQuery();
 
@@ -71,6 +71,18 @@ public class AccountRepository extends BaseRepository {
             targetAccountStatement.setString(2, toAccountNumber);
             targetAccountStatement.executeUpdate();
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void createAccount(String userId, String accountNumber) {
+        try {
+            PreparedStatement statement = this.prepareStatement("insert into account values (?, ?, 0)");
+            statement.setString(1, accountNumber);
+            statement.setString(2, userId);
+
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

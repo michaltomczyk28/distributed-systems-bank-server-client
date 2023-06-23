@@ -1,16 +1,16 @@
 package server.context;
 
-import server.state.StateFactory;
+import server.state.factory.StateFactory;
 import shared.communication.SocketCommunicationBus;
 import server.state.ApplicationState;
 
-public class ClientApplicationContext implements ApplicationContext {
+public class ApplicationContextImpl implements ApplicationContext {
     private SocketCommunicationBus communicationBus;
     private StateFactory stateFactory;
     private ApplicationState applicationState;
     private String loggedInUserId;
 
-    public ClientApplicationContext(SocketCommunicationBus communicationBus, StateFactory stateFactory) {
+    public ApplicationContextImpl(SocketCommunicationBus communicationBus, StateFactory stateFactory) {
         this.communicationBus = communicationBus;
         this.stateFactory = stateFactory;
     }

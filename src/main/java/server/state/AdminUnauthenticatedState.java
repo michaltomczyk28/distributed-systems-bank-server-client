@@ -3,18 +3,18 @@ package server.state;
 import server.context.ApplicationContext;
 import server.state.factory.StateFactory;
 
-public class ClientUnauthenticatedState extends UnauthenticatedState {
+public class AdminUnauthenticatedState extends UnauthenticatedState {
 
-    public ClientUnauthenticatedState(ApplicationContext applicationContext) {
+    public AdminUnauthenticatedState(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 
     @Override
     protected void attemptLogin() {
-        String userId = this.userRepository.authenticateUser(this.username, this.password);
+        String userId = this.userRepository.authenticateAdmin(this.username, this.password);
 
         if(userId != null) {
-            this.communicationBus.sendMessage("\nYou've been authenticated successfully!");
+            this.communicationBus.sendMessage("\nYou've been authenticated successfully as an administrator!");
 
 
             StateFactory stateFactory = this.applicationContext.getStateFactory();

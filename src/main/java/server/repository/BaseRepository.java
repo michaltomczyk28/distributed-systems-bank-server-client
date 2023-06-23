@@ -17,6 +17,6 @@ public abstract class BaseRepository {
     }
 
     protected PreparedStatement prepareStatement(String sql) throws SQLException {
-        return this.database.getConnection().prepareStatement(sql);
+        return this.database.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
     }
 }

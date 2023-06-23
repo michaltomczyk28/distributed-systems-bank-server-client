@@ -25,6 +25,6 @@ public class GetBalanceCommand extends ApplicationCommand {
         AccountRepository accountRepository = new AccountRepository();
         double balance = accountRepository.getBalanceByUserId(this.applicationContext.getLoggedInUserId());
 
-        return "Your balance: " + balance;
+        return "Your balance: $" + balance;
     }
 }

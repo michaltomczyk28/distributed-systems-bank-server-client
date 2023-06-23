@@ -2,7 +2,7 @@ package server.commands;
 
 import server.context.ApplicationContext;
 import server.state.CommandExecutionState;
-import server.state.StateFactory;
+import server.state.factory.StateFactory;
 
 import java.util.HashMap;
 import java.util.List;
