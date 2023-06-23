@@ -4,12 +4,13 @@ import server.context.ApplicationContext;
 import server.repository.UserRepository;
 import shared.communication.SocketCommunicationBus;
 
-public class UnauthenticatedState implements ApplicationState {
-    private ApplicationContext applicationContext;
-    private SocketCommunicationBus communicationBus;
-    private UserRepository userRepository;
-    private String username;
-    private String password;
+public abstract class UnauthenticatedState implements ApplicationState {
+    protected ApplicationContext applicationContext;
+    protected SocketCommunicationBus communicationBus;
+    protected UserRepository userRepository;
+    protected String username;
+    protected String password;
+
     private boolean isPendingForResponse = false;
 
     public UnauthenticatedState(ApplicationContext applicationContext) {
@@ -43,25 +44,17 @@ public class UnauthenticatedState implements ApplicationState {
             this.communicationBus.sendMessage("Password: ");
         } else {
             this.attemptLogin();
+            this.resetInternalState();
+
             return;
         }
 
         this.isPendingForResponse = true;
     }
 
-    private void attemptLogin() {
-        String userId = this.userRepository.authenticateUser(this.username, this.password);
+    protected abstract void attemptLogin();
 
-        if(userId != null) {
-            this.communicationBus.sendMessage("\nYou've been authenticated successfully!");
-
-            this.applicationContext.setLoggedInUserId(userId);
-            this.applicationContext.setApplicationState(new CommandExecutionState(this.applicationContext));
-
-            return;
-        }
-
-        this.communicationBus.sendMessage("Invalid credentials. Try again!");
+    private void resetInternalState() {
         this.username = null;
         this.password = null;
         this.isPendingForResponse = false;

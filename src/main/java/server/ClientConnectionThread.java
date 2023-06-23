@@ -1,9 +1,9 @@
 package server;
 
 import server.context.ClientApplicationContext;
-import shared.communication.SocketCommunicationBus;
 import server.state.ApplicationState;
-import server.state.UnauthenticatedState;
+import server.state.ClientUnauthenticatedState;
+import shared.communication.SocketCommunicationBus;
 
 import java.net.Socket;
 
@@ -25,7 +25,7 @@ public class ClientConnectionThread implements Runnable {
             SocketCommunicationBus communicationBus = this.applicationContext.getCommunicationBus();
 
             this.applicationContext.setApplicationState(
-                    new UnauthenticatedState(this.applicationContext)
+                    new ClientUnauthenticatedState(this.applicationContext)
             );
 
             while(true) {
