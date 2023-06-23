@@ -1,12 +1,13 @@
 package server.state;
 
-import server.commands.*;
+import server.commands.ApplicationCommand;
 import server.context.ApplicationContext;
 import shared.communication.SocketCommunicationBus;
 
-public class CommandExecutionState implements ApplicationState {
-    private SocketCommunicationBus communicationBus;
-    private ApplicationContext applicationContext;
+public abstract class CommandExecutionState implements ApplicationState {
+    protected SocketCommunicationBus communicationBus;
+    protected ApplicationContext applicationContext;
+
     private ApplicationCommand currentCommand;
     private boolean didDisplayMenu = false;
 
@@ -18,8 +19,15 @@ public class CommandExecutionState implements ApplicationState {
 
     @Override
     public void onInput(String input) {
-        if(currentCommand == null) {
-            this.currentCommand = this.createCommandByName(input);
+        if(this.currentCommand == null) {
+            try {
+                this.currentCommand = this.createCommandByName(input);
+            } catch(Exception e) {
+                this.communicationBus.sendMessage("\nERROR: Invalid command!");
+
+                this.didDisplayMenu = false;
+                this.currentCommand = null;
+            }
 
             return;
         }
@@ -31,6 +39,8 @@ public class CommandExecutionState implements ApplicationState {
     public void next() {
         if(!this.didDisplayMenu) {
             this.displayMenu();
+            this.didDisplayMenu = true;
+
             return;
         }
 
@@ -39,45 +49,7 @@ public class CommandExecutionState implements ApplicationState {
         }
     }
 
-    private void displayMenu() {
-        this.communicationBus.sendMessage("""
-            \n
-            BANK APPLICATION
-            ――――――――――――――――――――
-            Available commands:
-            
-            1. My account: ⟪ me ⟫
-            1. Transfer money: ⟪ transfer ⟫
-            2. Check your balance: ⟪ balance ⟫
-            3. Withdraw money: ⟪ withdraw ⟫
-            4. Make a deposit: ⟪ deposit ⟫
-            
-            Type a command:""");
+    protected abstract void displayMenu();
 
-        this.didDisplayMenu = true;
-    }
-
-    private ApplicationCommand createCommandByName(String name) {
-        switch(name) {
-            case "me":
-                return new UserInformationCommand(this.applicationContext);
-
-            case "balance":
-                return new GetBalanceCommand(this.applicationContext);
-
-            case "deposit":
-                return new DepositMoneyCommand(this.applicationContext);
-
-            case "withdraw":
-                return new WithdrawMoneyCommand(this.applicationContext);
-
-            case "transfer":
-                return new TransferCommand(this.applicationContext);
-        }
-
-        this.communicationBus.sendMessage("\nERROR: Invalid command!");
-        this.didDisplayMenu = false;
-
-        return null;
-    }
+    protected abstract ApplicationCommand createCommandByName(String name);
 }

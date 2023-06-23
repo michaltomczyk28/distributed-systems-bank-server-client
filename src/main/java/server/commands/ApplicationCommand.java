@@ -1,7 +1,7 @@
 package server.commands;
 
 import server.context.ApplicationContext;
-import server.state.CommandExecutionState;
+import server.state.ClientCommandExecutionState;
 
 import java.util.HashMap;
 import java.util.List;
@@ -78,6 +78,6 @@ public abstract class ApplicationCommand {
     protected abstract String execute();
 
     private void goBackToMenu() {
-        this.applicationContext.setApplicationState(new CommandExecutionState(this.applicationContext));
+        this.applicationContext.setApplicationState(new ClientCommandExecutionState(this.applicationContext));
     }
 }

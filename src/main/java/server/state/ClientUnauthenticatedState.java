@@ -16,7 +16,7 @@ public class ClientUnauthenticatedState extends UnauthenticatedState {
             this.communicationBus.sendMessage("\nYou've been authenticated successfully!");
 
             this.applicationContext.setLoggedInUserId(userId);
-            this.applicationContext.setApplicationState(new CommandExecutionState(this.applicationContext));
+            this.applicationContext.setApplicationState(new ClientCommandExecutionState(this.applicationContext));
 
             return;
         }
